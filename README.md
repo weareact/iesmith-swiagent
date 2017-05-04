@@ -19,9 +19,9 @@ While agents can be deployed from the Solarwinds console itself, there are many 
 
 ## Setup
 
-~~~bash
+```bash
 puppet module install iesmith-swiagent
-~~~
+```
 
 ## Usage
 
@@ -33,11 +33,15 @@ Swiagent was written with the intent of configuring the module via Hiera, though
 
 Data type: String.
 
+Hostname or IP address of your Orion server.
+
 Default value: `solarwinds.example.com`
 
 #### `targetport`
 
 Data type: Integer.
+
+Orion SDK port.
 
 Default value: `17778`
 
@@ -45,9 +49,13 @@ Default value: `17778`
 
 Data type: String.
 
+Username of an Orion user with sufficient privileges to create nodes within NPM on the server specified in `targethost`.
+
 Default value: `admin`
 
 #### `targetpw`
+
+Valid password for the user specified in `targetuser`.
 
 Data type: String.
 
@@ -57,11 +65,25 @@ Default value: `undef`
 
 Data type: String.
 
+Hostname or IP address of an HTTPS-capable proxy server. On a [Squid](http://www.squid-cache.org/) proxy, HTTPS clients must have CONNECT privileges to the Orion SDK port. This is not permitted in the default configuration, though the following modification should allow this.
+
+On RedHat-based systems Squid comes preconfigured with an SSL_ports ACL. Simply adding 17778 to this ACL should permit the agent to communicate:
+
+```shell
+acl SSL_ports port 443 8140 *17778*
+acl CONNECT method CONNECT
+http_access deny CONNECT !SSL_ports
+```
+
+Obviously additional ACLs will be required to permit access; this ACL is simply meant to *prevent* a CONNECT to non-SSL ports.
+
 Default value: `undef`
 
 #### `proxyport`
 
-Data type: String.
+Data type: Integer.
+
+Proxy server port; commonly TCP/8080 or TCP/3128.
 
 Default value: `3128`
 
@@ -69,11 +91,15 @@ Default value: `3128`
 
 Data type: String.
 
+Username of an proxy user with sufficient privileges to CONNECT (see: `proxyhost`) to the server specified in `targethost`.
+
 Default value: `undef`
 
 #### `proxypw`
 
 Data type: String.
+
+Valid password for the user specified in `proxyuser`.
 
 Default value: `undef`
 
