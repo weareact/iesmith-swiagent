@@ -77,13 +77,15 @@ http_access deny CONNECT !SSL_ports
 
 Obviously additional ACLs will be required to permit access; this ACL is simply meant to *prevent* a CONNECT to non-SSL ports.
 
-Default value: `undef`
+Default value: `false`
 
 #### `proxyport`
 
 Data type: Integer.
 
 Proxy server port; commonly TCP/8080 or TCP/3128.
+
+Specified values will be ignored if `proxyhost` is not defined.
 
 Default value: `3128`
 
@@ -93,13 +95,17 @@ Data type: String.
 
 Username of an proxy user with sufficient privileges to CONNECT (see: `proxyhost`) to the server specified in `targethost`.
 
+Specified values will be ignored if `proxyhost` is not defined.
+
 Default value: `undef`
 
 #### `proxypw`
 
 Data type: String.
 
-Valid password for the user specified in `proxyuser`.
+Specified valid password for the user specified in `proxyuser`.
+
+Values will be ignored if `proxyhost` is not defined.
 
 Default value: `undef`
 

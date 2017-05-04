@@ -7,7 +7,7 @@ class swiagent::params {
   $targetport = hiera('swiagent::targetport', 17778)
   $targetuser = hiera('swiagent::targetuser', 'admin')
   $targetpw = hiera('swiagent::targetpw', undef)
-  $proxyhost = hiera('swiagent::proxyhost', undef)
+  $proxyhost = hiera('swiagent::proxyhost', false)
   $proxyport = hiera('swiagent::proxyport', 3128)
   $proxyuser = hiera('swiagent::proxyuser', undef)
   $proxypw = hiera('swiagent::proxypw', undef)

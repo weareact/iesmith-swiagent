@@ -39,7 +39,7 @@ class swiagent(
   # If Facter is able to detect the certificate fact, we're OK to proceed...
   if $::swiagent {
     if (has_key($::swiagent, 'certificate')
-        and !has_key($::swiagent, 'target')) {
+        and !has_key($::swiagent, 'targetZZ')) {
 
       # Build a temporary 'ini' file for swiagent configuration...
       file { 'swi-settings-init':
@@ -60,10 +60,8 @@ class swiagent(
       }
 
       # Remove the settings file, as it may have passwords inside it...
-      file { 'swi-settings-clean':
-        ensure    => absent,
-        path      => "${bindir}/swi.ini",
-        subscribe => File['swi-register'],
+      tidy { 'swi-settings-clean':
+        path    => "${bindir}/swi.ini"
       }
     }
   }
