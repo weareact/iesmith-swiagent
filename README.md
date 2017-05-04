@@ -11,16 +11,11 @@
 
 ## Overview
 
-The swiagent module can be used to control and deploy the Solarwinds Linux
-agent in ways not possible via the Solarwinds Orion interface.
+The swiagent module can be used to control and deploy the Solarwinds Linux agent in ways not possible via the Solarwinds Orion interface.
 
 ## Module Description
 
-While agents can be deployed from the Solarwinds console itself, there
-are many use case in which this isn't simply possible. One, which led to the 
-development of this module, is the possiblity that the monitored hosts reside
-within a secure network, such as a DMZ in which *only* limited inbound and 
-outbound connections are possible.
+While agents can be deployed from the Solarwinds console itself, there are many use case in which this isn't simply possible. One, which led to the development of this module, is the possiblity that the monitored hosts reside within a secure network, such as a DMZ in which *only* limited inbound and outbound connections are possible.
 
 ## Setup
 
@@ -30,20 +25,9 @@ puppet module install iesmith-swiagent
 
 ## Usage
 
-Swiagent was written with the intent of configuring the module via Hiera, 
-though it may be equally well configured via a class declaration. 
+Swiagent was written with the intent of configuring the module via Hiera, though it may be equally well configured via a class declaration. 
 
 ## Reference
-
-#### `bindir`
-
-Data type: String.
-
-The path into which the Solarwinds agents will be installed. As far as I'm
-aware, all of the various Linux agent packages install binaries into this 
-directory, so changing this requires some careful thought.
-
-Default value: `/opt/SolarWinds/Agent/bin`
 
 #### `targethost`
 
@@ -93,17 +77,21 @@ Data type: String.
 
 Default value: `undef`
 
+#### `managepkgs`
+
+Data type: Boolean.
+
+Installs dependency packages. At present this only includes the [Nokogiri package](http://www.nokogiri.org/), a Rubygem used for parsing the XML swiagent.cfg file.
+
+Default value: `true`
+
 #### `manageswipkg`
 
-Data type: String.
+Data type: Boolean.
 
-Installs the swiagent package via whichever repositories you may have set up.
-Note that while it's possible to set up various package management systems
-to pull the agents directly from Orion, this does involve additional setup work,
-and as such is a non-default option.
+Installs the swiagent package via whichever repositories you may have set up. Note that while it's possible to set up various package management systems to pull the agents directly from Orion, this does involve additional setup work, and as such is a non-default option.
 
-The following example sets up a Yum repository on CentOS 7 to pull the RPM 
-package straight from your Orion server:
+The following example sets up a Yum repository on CentOS 7 to pull the RPM package straight from your Orion server:
 
 ```shell
 [orion]
@@ -114,6 +102,14 @@ gpgcheck=0
 ```
 
 Default value: `false`
+
+#### `bindir`
+
+Data type: String.
+
+The path into which the Solarwinds agents will be installed. As far as I'm aware, all of the various Linux agent packages install binaries into this directory, so changing this requires fairly careful thought.
+
+Default value: `/opt/SolarWinds/Agent/bin`
 
 ## Limitations
 
