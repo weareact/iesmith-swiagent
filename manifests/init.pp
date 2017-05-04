@@ -5,7 +5,7 @@
 # http://puppet-lint.com/checks/class_inherits_from_params_class/
 
 class swiagent(
-    $swidir       = $swiagent::params::swidir,
+    $bindir       = $swiagent::params::bindir,
     $targethost   = $swiagent::params::targethost,
     $targetport   = $swiagent::params::targetport,
     $targetuser   = $swiagent::params::targetuser,
@@ -32,8 +32,8 @@ class swiagent(
   # If no configuration file exists, create one and initialise the
   # securestring...
   exec { 'swiagent-init':
-    onlyif  => "${testpath} ! -f ${swidir}/swiagent.cfg",
-    command => "${swidir}/swiagent /logfile /initsecurestring",
+    onlyif  => "${testpath} ! -f ${bindir}/swiagent.cfg",
+    command => "${bindir}/swiagent /logfile /initsecurestring",
   }
 
   # If Facter is able to detect the certificate fact, we're OK to proceed...
@@ -43,7 +43,7 @@ class swiagent(
 
       # Build a temporary 'ini' file for swiagent configuration...
       file { 'swi-settings-init':
-        path    => "${swidir}/swi.ini",
+        path    => "${bindir}/swi.ini",
         mode    => '0600',
         owner   => 'root',
         group   => 'root',
@@ -53,8 +53,8 @@ class swiagent(
       # Register the installed agent with Solarwinds, and delete the settings
       # file (it may have...
       exec { 'swi-register':
-        onlyif      => "${testpath} -f ${swidir}/swi.ini",
-        command     => "${catpath} ${swidir}/swi.ini | ${swidir}/swiagent",
+        onlyif      => "${testpath} -f ${bindir}/swi.ini",
+        command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent",
         subscribe   => File['swi-settings-init'],
         refreshonly => true
       }
@@ -62,7 +62,7 @@ class swiagent(
       # Remove the settings file, as it may have passwords inside it...
       file { 'swi-settings-clean':
         ensure    => absent,
-        path      => "${swidir}/swi.ini",
+        path      => "${bindir}/swi.ini",
         subscribe => File['swi-register'],
       }
     }

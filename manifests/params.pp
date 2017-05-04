@@ -2,12 +2,12 @@
 
 class swiagent::params {
   # Generic default settings...
-  $swidir = hiera('swiagent::swidir', '/opt/SolarWinds/Agent/bin')
+  $bindir = hiera('swiagent::bindir', '/opt/SolarWinds/Agent/bin')
   $targethost = hiera('swiagent::targethost', 'solarwinds.example.com')
   $targetport = hiera('swiagent::targetport', 17778)
   $targetuser = hiera('swiagent::targetuser', 'admin')
   $targetpw = hiera('swiagent::targetpw', undef)
-  $proxyhost = hiera('swiagent::proxyhost', 'proxy.example.com')
+  $proxyhost = hiera('swiagent::proxyhost', undef)
   $proxyport = hiera('swiagent::proxyport', 3128)
   $proxyuser = hiera('swiagent::proxyuser', undef)
   $proxypw = hiera('swiagent::proxypw', undef)
