@@ -1,6 +1,6 @@
 {
   "name": "iesmith-swiagent",
-  "version": "0.2",
+  "version": "0.3.0",
   "author": "iesmith",
   "license": "CC-BY-4.0",
   "summary": "Control and deploy the Solarwinds Linux agent",
