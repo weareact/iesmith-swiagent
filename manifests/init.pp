@@ -20,7 +20,7 @@ class swiagent(
     $managepkgs = $swiagent::params::managepkgs,
     $nokogiripkg = $swiagent::params::nokogiripkg,
     $testpath = $swiagent::params::testpath,
-    $catpath = $swiagent::params::catpath,
+    $sedpath = $swiagent::params::sedpath,
     $rmpath = $swiagent::params::rmpath
   ) inherits swiagent::params {
 
@@ -66,12 +66,13 @@ class swiagent(
 
   # Create a temporary file containing the real passwords, which will
   # be deleted by a subsquent exec. A temporary file will prevent the
-  # exposure of plaintext passwords in the process table...
+  # exposure of plaintext passwords in the process table had we piped 
+  # it...
   exec { 'swi-settings-temp':
     cwd         => $bindir,
     umask       => '0177',
     onlyif      => "${testpath} -f swi.ini",
-    command     => "/bin/sed -e 's/${targetpwhash}/${targetpw}/g' -e 's/${proxypwhash}/${proxypw}/g' < swi.ini > swi.ini.tmp",
+    command     => "${sedpath} -e 's/${targetpwhash}/${targetpw}/g' -e 's/${proxypwhash}/${proxypw}/g' < swi.ini > swi.ini.tmp",
     refreshonly => true,
     notify      => Exec['swi-register']
   }
@@ -81,8 +82,7 @@ class swiagent(
   exec { 'swi-register':
     cwd         => $bindir,
     onlyif      => "${testpath} -f swi.ini.tmp",
-    # command     => "${bindir}/swiagent < swi.ini.tmp; ${rmpath} -f ${bindir}/swi.ini.tmp",
-    command     => "${bindir}/swiagent < swi.ini.tmp",
+    command     => "${bindir}/swiagent < swi.ini.tmp; ${rmpath} -f ${bindir}/swi.ini.tmp",
     refreshonly => true
   }
 
