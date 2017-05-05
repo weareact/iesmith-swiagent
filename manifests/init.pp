@@ -5,22 +5,31 @@
 # http://puppet-lint.com/checks/class_inherits_from_params_class/
 
 class swiagent(
-    $bindir       = $swiagent::params::bindir,
-    $targethost   = $swiagent::params::targethost,
-    $targetport   = $swiagent::params::targetport,
-    $targetuser   = $swiagent::params::targetuser,
-    $targetpw     = $swiagent::params::targetpw,
-    $proxyhost    = $swiagent::params::proxyhost,
-    $proxyport    = $swiagent::params::proxyport,
-    $proxyuser    = $swiagent::params::proxyuser,
-    $proxypw      = $swiagent::params::proxypw,
+    $bindir = $swiagent::params::bindir,
+    $targethost = $swiagent::params::targethost,
+    $targetport = $swiagent::params::targetport,
+    $targetuser = $swiagent::params::targetuser,
+    $targetpw = $swiagent::params::targetpw,
+    $agentpush = $swiagent::params::agentpush,
+    $agentsecret = $swiagent::params::agentsecret,
+    $proxyhost = $swiagent::params::proxyhost,
+    $proxyport = $swiagent::params::proxyport,
+    $proxyuser = $swiagent::params::proxyuser,
+    $proxypw = $swiagent::params::proxypw,
     $manageswipkg = $swiagent::params::manageswipkg,
-    $managepkgs   = $swiagent::params::managepkgs,
-    $nokogiripkg  = $swiagent::params::nokogiripkg,
-    $testpath     = $swiagent::params::testpath,
-    $catpath      = $swiagent::params::catpath,
-    $rmpath       = $swiagent::params::rmpath
+    $managepkgs = $swiagent::params::managepkgs,
+    $nokogiripkg = $swiagent::params::nokogiripkg,
+    $testpath = $swiagent::params::testpath,
+    $catpath = $swiagent::params::catpath,
+    $rmpath = $swiagent::params::rmpath
   ) inherits swiagent::params {
+
+  # Validate supplied options...
+  if !$agentpush and !$agentsecret {
+    # A shared secret is mandatory if we're setting server-initiated 
+    # communications...
+    fail('agentpush parameter set to false, but no agentsecret set.')
+  }
 
   # Ensure that Solarwinds agents and dependant packages are installed... 
   if $manageswipkg {
@@ -40,7 +49,7 @@ class swiagent(
   # If Facter is able to detect the certificate fact, we're OK to proceed...
   if $::swiagent {
     if (has_key($::swiagent, 'certificate')
-        and !has_key($::swiagent, 'targetZZ')) {
+        and !has_key($::swiagent, 'target')) {
 
       # Build a temporary 'ini' file for swiagent configuration...
       file { 'swi-settings-init':
@@ -52,7 +61,7 @@ class swiagent(
       }
 
       # Register the installed agent with Solarwinds, and delete the settings
-      # file (it may have...
+      # file (it may have a password present)...
       exec { 'swi-register':
         onlyif      => "${testpath} -f ${bindir}/swi.ini",
         command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent; ${rmpath} -f ${bindir}/swi.ini",

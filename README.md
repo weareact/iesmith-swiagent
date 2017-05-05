@@ -61,6 +61,24 @@ Data type: String.
 
 Default value: `undef`
 
+#### `agentpush`
+
+Used to control the [agent communication mode](http://www.solarwinds.com/documentation/en/flarehelp/orionplatform/content/core-agent-communication-modes.htm?cshid=OrionAgentManagementPHActivePassiveAgent) of swiagentd. When set to true, the agent will operate in agent-initiated communication mode. On setting this parameter to `false`, `agentsecret` becomes *mandatory*.
+
+*Note*: Server-initiated communication mode will require manual intervention in Solarwinds, and as such probably negates many of the advantages of using this module. In this situation, I'd be strongly inclined to push the agent install from the Orion console, though there may be use-cases I've not thought of. 
+
+Data type: Boolean.
+
+Default value: `true`
+
+#### `agentsecret`
+
+Sets a shared secret for use in server-initiated communication mode. This parameter is *mandatory* when `agentpush` is set to `false`. 
+
+Data type: String.
+
+Default value: `true`
+
 #### `proxyhost`
 
 Data type: String.
@@ -147,3 +165,4 @@ Default value: `/opt/SolarWinds/Agent/bin`
 
 At present the module has only been tested under RedHat/CentOS versions 6 & 7. 
 
+Server-initiated communication mode does not set up an agent or node in Orion. These will need to be created manually, and as such, probably negates the advantages of using this module.
