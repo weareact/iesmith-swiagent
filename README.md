@@ -19,13 +19,33 @@ While agents can be deployed from the Solarwinds console itself, there are many 
 
 ## Setup
 
-```bash
+```shell
 puppet module install iesmith-swiagent
 ```
 
 ## Usage
 
-Swiagent was written with the intent of configuring the module via Hiera, though it may be equally well configured via a class declaration. 
+Below is a relatively simple installation of an (already installed) swiagent, followed by configuration of the agent to talk to the Orion server 192.168.0.1, via a proxy at 192.168.0.2:8080.
+
+```yaml
+swiagent::targethost:   '192.168.0.1',
+swiagent::targetuser:   'orionuser',
+swiagent::targetpw:     'SuperSecretPassword',
+swiagent::proxyhost:    '192.168.0.2',
+swiagent::proxyport:    '8080'
+```
+
+Although iesmith-swgagent was written with the intent of configuring the module via Hiera, it may be equally well configured via a class declaration. Below is the same configuration written directly into a manifest. 
+
+```puppet
+class { '::swiagent':
+    targethost   => '192.168.0.1',
+    targetuser   => 'orionuser',
+    targetpw     => 'SuperSecretPassword',
+    proxyhost    => '192.168.0.2',
+    proxyport    => '8080'
+}
+```
 
 ## Reference
 
