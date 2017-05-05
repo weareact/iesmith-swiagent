@@ -28,10 +28,10 @@ puppet module install iesmith-swiagent
 Below is a relatively simple installation of an (already installed) swiagent, followed by configuration of the agent to talk to the Orion server 192.168.0.1, via a proxy at 192.168.0.2:8080.
 
 ```yaml
-swiagent::targethost:   '192.168.0.1',
-swiagent::targetuser:   'orionuser',
-swiagent::targetpw:     'SuperSecretPassword',
-swiagent::proxyhost:    '192.168.0.2',
+swiagent::targethost:   '192.168.0.1'
+swiagent::targetuser:   'orionuser'
+swiagent::targetpw:     'SuperSecretPassword'
+swiagent::proxyhost:    '192.168.0.2'
 swiagent::proxyport:    '8080'
 ```
 
@@ -75,31 +75,31 @@ Default value: `admin`
 
 #### `targetpw`
 
+Data type: String
+
 Valid password for the user specified in `targetuser`.
 
-*Note*: The password will be SHA1 hashed for permanent storage in the swi.ini file, though it will be briefly exist in plaintext form in a (mode 600, root-owned) temporary file whilst Puppet is piping the information to swagent. This is an unfortunate (security-wise) neccessity as swagent must be given the plaintext password.
-
-Data type: String.
+**Note**: The password will be SHA1 hashed for permanent storage in the swi.ini file, though it will be briefly exist in plaintext form in a (mode 600, root-owned) temporary file whilst Puppet is piping the information to swagent. This is an unfortunate (security-wise) neccessity as swagent must be given the plaintext password.
 
 Default value: `undef`
 
 #### `agentpush`
 
+Data type: Boolean.
+
 Used to control the [agent communication mode](http://www.solarwinds.com/documentation/en/flarehelp/orionplatform/content/core-agent-communication-modes.htm?cshid=OrionAgentManagementPHActivePassiveAgent) of swiagentd. When set to true, the agent will operate in agent-initiated communication mode. On setting this parameter to `false`, `agentsecret` becomes *mandatory*.
 
-*Note*: Server-initiated communication mode will require manual intervention in Solarwinds, and as such probably negates many of the advantages of using this module. In this situation, I'd be strongly inclined to push the agent install from the Orion console, though there may be use-cases I've not thought of. 
-
-Data type: Boolean.
+**Note**: Server-initiated communication mode will require manual intervention in Solarwinds, and as such probably negates many of the advantages of using this module. In this situation, I'd be strongly inclined to push the agent install from the Orion console, though there may be use-cases I've not thought of. 
 
 Default value: `true`
 
 #### `agentsecret`
 
+Data type: String.
+
 Sets a shared secret for use in server-initiated communication mode. This parameter is *mandatory* when `agentpush` is set to `false`. 
 
-*Note*: Unlike `targetpw` and `proxypw`, the shared secret will not be hashed for storage in swi.ini.
-
-Data type: String.
+**Note**: Unlike `targetpw` and `proxypw`, the shared secret will not be hashed for storage in swi.ini.
 
 Default value: `undef`
 
@@ -112,7 +112,7 @@ Hostname or IP address of an HTTPS-capable proxy server. On a [Squid](http://www
 On RedHat-based systems Squid comes preconfigured with an SSL_ports ACL. Simply adding 17778 to this ACL should permit the agent to communicate:
 
 ```shell
-acl SSL_ports port 443 8140 *17778*
+acl SSL_ports port 443 8140 17778
 acl CONNECT method CONNECT
 http_access deny CONNECT !SSL_ports
 ```
