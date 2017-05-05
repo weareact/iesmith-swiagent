@@ -57,6 +57,8 @@ Default value: `admin`
 
 Valid password for the user specified in `targetuser`.
 
+*Note*: The password will be SHA1 hashed for permanent storage in the swi.ini file, though it will be briefly exist in plaintext form in a (mode 600, root-owned) temporary file whilst Puppet is piping the information to swagent. This is an unfortunate (security-wise) neccessity as swagent must be given the plaintext password.
+
 Data type: String.
 
 Default value: `undef`
@@ -74,6 +76,8 @@ Default value: `true`
 #### `agentsecret`
 
 Sets a shared secret for use in server-initiated communication mode. This parameter is *mandatory* when `agentpush` is set to `false`. 
+
+*Note*: Unlike `targetpw` and `proxypw`, the shared secret will not be hashed for storage in swi.ini.
 
 Data type: String.
 
@@ -121,9 +125,9 @@ Default value: `undef`
 
 Data type: String.
 
-Specified valid password for the user specified in `proxyuser`.
+Valid password for the user specified in `proxyuser`. Values will be ignored if `proxyhost` is not defined.
 
-Values will be ignored if `proxyhost` is not defined.
+*Note*: The password will be SHA1 hashed for permanent storage in the swi.ini file, though it will be briefly exist in plaintext form in a (mode 600, root-owned) temporary file whilst Puppet is piping the information to swagent. This is an unfortunate (security-wise) neccessity as swagent must be given the plaintext password.
 
 Default value: `undef`
 
