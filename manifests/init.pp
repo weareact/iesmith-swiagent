@@ -49,35 +49,41 @@ class swiagent(
   # We don't want to leave Orion passwords lying around in the ini file, 
   # but at the same time, we want to be able to detect config changes.
   # The SHA1 achieves both these ends, but it does mean we'll have to 
-  # create a temporary ini file to feel to swiagent with the real 
+  # create a temporary ini file to feed to swiagent with the real 
   # password when required.
   $targetpwhash = sha1($targetpw)
   $proxypwhash = sha1($proxypw)
 
-  # Build the 'ini' file for swiagent configuration...
+  # Build the 'permanent' file for swiagent configuration...
   file { 'swi-settings-init':
     path    => "${bindir}/swi.ini",
     mode    => '0600',
     owner   => 'swiagent',
     group   => 'swiagent',
-    content => template('swiagent/swi.ini.erb')
+    content => template('swiagent/swi.ini.erb'),
+    notify  => Exec['swi-settings-temp']
   }
 
-  # If Facter is able to detect the certificate fact, we're OK to proceed...
-  if $::swiagent {
-    if (has_key($::swiagent, 'certificate')
-        and !has_key($::swiagent, 'target')) {
+  # Create a temporary file containing the real passwords, which will
+  # be deleted by a subsquent exec. A temporary file will prevent the
+  # exposure of plaintext passwords in the process table...
+  exec { 'swi-settings-temp':
+    cwd         => $bindir,
+    umask       => '0177',
+    onlyif      => "${testpath} -f swi.ini",
+    command     => "/bin/sed -e 's/${targetpwhash}/${targetpw}/g' -e 's/${proxypwhash}/${proxypw}/g' < swi.ini > swi.ini.tmp",
+    refreshonly => true,
+    notify      => Exec['swi-register']
+  }
 
-      # Register the installed agent with Solarwinds, and delete the settings
-      # file (it may have a password present)...
-      exec { 'swi-register':
-        onlyif      => "${testpath} -f ${bindir}/swi.ini",
-        # command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent; ${rmpath} -f ${bindir}/swi.ini",
-        command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent",
-        subscribe   => File['swi-settings-init'],
-        refreshonly => true
-      }
-    }
+  # Register the installed agent with Solarwinds, and delete the settings
+  # file (it may have a password present)...
+  exec { 'swi-register':
+    cwd         => $bindir,
+    onlyif      => "${testpath} -f swi.ini.tmp",
+    # command     => "${bindir}/swiagent < swi.ini.tmp; ${rmpath} -f ${bindir}/swi.ini.tmp",
+    command     => "${bindir}/swiagent < swi.ini.tmp",
+    refreshonly => true
   }
 
   # Ensure the service is running...
