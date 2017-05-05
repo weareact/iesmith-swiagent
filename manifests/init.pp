@@ -18,7 +18,8 @@ class swiagent(
     $managepkgs   = $swiagent::params::managepkgs,
     $nokogiripkg  = $swiagent::params::nokogiripkg,
     $testpath     = $swiagent::params::testpath,
-    $catpath      = $swiagent::params::catpath
+    $catpath      = $swiagent::params::catpath,
+    $rmpath       = $swiagent::params::rmpath
   ) inherits swiagent::params {
 
   # Ensure that Solarwinds agents and dependant packages are installed... 
@@ -45,8 +46,8 @@ class swiagent(
       file { 'swi-settings-init':
         path    => "${bindir}/swi.ini",
         mode    => '0600',
-        owner   => 'root',
-        group   => 'root',
+        owner   => 'swiagent',
+        group   => 'swiagent',
         content => template('swiagent/swi.ini.erb')
       }
 
@@ -54,14 +55,9 @@ class swiagent(
       # file (it may have...
       exec { 'swi-register':
         onlyif      => "${testpath} -f ${bindir}/swi.ini",
-        command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent",
+        command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent; ${rmpath} -f ${bindir}/swi.ini",
         subscribe   => File['swi-settings-init'],
         refreshonly => true
-      }
-
-      # Remove the settings file, as it may have passwords inside it...
-      tidy { 'swi-settings-clean':
-        path    => "${bindir}/swi.ini"
       }
     }
   }

@@ -25,6 +25,7 @@ class swiagent::params {
       # Assign basic binary paths...
       $testpath = '/usr/bin/test'
       $catpath = '/usr/bin/cat'
+      $rmpath = '/bin/rm'
     }
     default: {
       # TODO: We'll need to draw attention to default handing here later on...
