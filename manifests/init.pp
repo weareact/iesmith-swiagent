@@ -48,11 +48,16 @@ class swiagent(
 
   # We don't want to leave Orion passwords lying around in the ini file, 
   # but at the same time, we want to be able to detect config changes.
-  # The SHA1 achieves both these ends, but it does mean we'll have to 
-  # create a temporary ini file to feed to swiagent with the real 
+  # The SHA1 hash achieves both these ends, but it does mean we'll have 
+  # to create a temporary ini file to feed to swiagent with the real 
   # password when required.
   $targetpwhash = sha1($targetpw)
-  $proxypwhash = sha1($proxypw)
+  if $proxyuser and $proxypw {
+    $proxypwhash = sha1($proxypw)
+  } else {
+    # We don't want to hash an already empty value...
+    $proxypwhash = undef
+  }
 
   # Build the 'permanent' file for swiagent configuration...
   file { 'swi-settings-init':
@@ -66,8 +71,8 @@ class swiagent(
 
   # Create a temporary file containing the real passwords, which will
   # be deleted by a subsquent exec. A temporary file will prevent the
-  # exposure of plaintext passwords in the process table had we piped 
-  # it...
+  # exposure of plaintext passwords in the process table that would have 
+  # happened had we piped it...
   exec { 'swi-settings-temp':
     cwd         => $bindir,
     umask       => '0177',

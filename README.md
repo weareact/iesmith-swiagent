@@ -81,7 +81,7 @@ Sets a shared secret for use in server-initiated communication mode. This parame
 
 Data type: String.
 
-Default value: `true`
+Default value: `undef`
 
 #### `proxyhost`
 
@@ -119,7 +119,7 @@ Username of an proxy user with sufficient privileges to CONNECT (see: `proxyhost
 
 Specified values will be ignored if `proxyhost` is not defined.
 
-Default value: `undef`
+Default value: `false`
 
 #### `proxypw`
 

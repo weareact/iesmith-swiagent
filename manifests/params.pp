@@ -10,7 +10,7 @@ class swiagent::params {
   $agentsecret = hiera('swiagent::agentsecret', undef)
   $proxyhost = hiera('swiagent::proxyhost', false)
   $proxyport = hiera('swiagent::proxyport', 3128)
-  $proxyuser = hiera('swiagent::proxyuser', undef)
+  $proxyuser = hiera('swiagent::proxyuser', false)
   $proxypw = hiera('swiagent::proxypw', undef)
   $manageswipkg = hiera('swiagent::manageswipkg', false)
   $bindir = hiera('swiagent::bindir', '/opt/SolarWinds/Agent/bin')
