@@ -46,25 +46,34 @@ class swiagent(
     command => "${bindir}/swiagent /logfile /initsecurestring",
   }
 
+  # We don't want to leave Orion passwords lying around in the ini file, 
+  # but at the same time, we want to be able to detect config changes.
+  # The SHA1 achieves both these ends, but it does mean we'll have to 
+  # create a temporary ini file to feel to swiagent with the real 
+  # password when required.
+  $targetpwhash = sha1($targetpw)
+  $proxypwhash = sha1($proxypw)
+
+  # Build the 'ini' file for swiagent configuration...
+  file { 'swi-settings-init':
+    path    => "${bindir}/swi.ini",
+    mode    => '0600',
+    owner   => 'swiagent',
+    group   => 'swiagent',
+    content => template('swiagent/swi.ini.erb')
+  }
+
   # If Facter is able to detect the certificate fact, we're OK to proceed...
   if $::swiagent {
     if (has_key($::swiagent, 'certificate')
         and !has_key($::swiagent, 'target')) {
 
-      # Build a temporary 'ini' file for swiagent configuration...
-      file { 'swi-settings-init':
-        path    => "${bindir}/swi.ini",
-        mode    => '0600',
-        owner   => 'swiagent',
-        group   => 'swiagent',
-        content => template('swiagent/swi.ini.erb')
-      }
-
       # Register the installed agent with Solarwinds, and delete the settings
       # file (it may have a password present)...
       exec { 'swi-register':
         onlyif      => "${testpath} -f ${bindir}/swi.ini",
-        command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent; ${rmpath} -f ${bindir}/swi.ini",
+        # command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent; ${rmpath} -f ${bindir}/swi.ini",
+        command     => "${catpath} ${bindir}/swi.ini | ${bindir}/swiagent",
         subscribe   => File['swi-settings-init'],
         refreshonly => true
       }
