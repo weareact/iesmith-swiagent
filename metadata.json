@@ -1,6 +1,6 @@
 {
   "name": "iesmith-swiagent",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "iesmith",
   "license": "CC-BY-4.0",
   "summary": "Control and deploy the Solarwinds Linux agent",
@@ -12,6 +12,12 @@
     "swiagentd",
     "solarwinds",
     "orion"
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">=2.6.2 <4.0.0"
+    }
   ],
   "operatingsystem_support": [
     {
